@@ -18,15 +18,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 📦 Build Plugin
-        uses: webshr/deploy-wp-update-server@latest
+        uses: webshr/action-wp-build-archive@latest
         with:
           install-composer: true # optional; defaults to no-dev
-          composer-no-dev: true # optional; defaults to false
           npm-run-build: true # optional; defaults to false
-          node-version: 20 # optional; defaults to '20.x'
+          node-version: 20 # optional; defaults to 20
           retention-days: 5 # optional; defaults to 30
           archive-name: my-plugin # optional; defaults to repository-name
-          upload-artifact: false # optional; defaults to true
+          upload-artifact: false # optional; defaults to false
 ```
 
 ## Excluding files from the archive
@@ -64,12 +63,14 @@ It is strongly recommended to save sensive credentials as secrets.
 
 | **Key Name**       | **Required** | **Example** | **Default**       | **Description**                               |
 | ------------------ | ------------ | ----------- | ----------------- | --------------------------------------------- |
-| `install-composer` | no           | `true`      | `false`           | Install composer packages before generating archive |
+| `install-composer` | no           | `no-dev`    | `no-dev`          | Install Composer packages before generating archive. Use `true`, `no-dev`, or `false` |
 | `npm-run-build`    | no           | `true`      | `false`           | Run `npm run build` before generating archive |
-| `node-version`     | no           | `20`        | `18`              | Node version |
+| `node-version`     | no           | `20`        | `20`              | Node version |
 | `retention-days`   | no           | `3`         | `30`              | Number of days to retain the arhive |
 | `archive-name`     | no           | `my-plugin` | `repository-name` | Name of the zip archive |
-| `upload-artifact`  | no           | `true`      | `false`           | Opt-out for artifact upload |
+| `upload-artifact`  | no           | `true`      | `false`           | Upload the generated archive as an artifact |
+
+The action installs WP-CLI and the `wp-cli/dist-archive-command` package at runtime. The dist archive command is pinned to a compatible release for reproducible builds.
 
 ### Credits
 

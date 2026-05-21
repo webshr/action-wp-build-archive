@@ -1,0 +1,23 @@
+# .github/workflows/test.yml
+name: Automated Test
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test-action:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./
+        with:
+          install-composer: false
+          npm-run-build: false
+          archive-name: test-archive
+          upload-artifact: false
+
+      - name: Assert archive exists
+        run: test -f test-archive.zip

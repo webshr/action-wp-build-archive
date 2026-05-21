@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file, per [the Keep a Changelog standard](http://keepachangelog.com/).
 
+## [0.1.4] - 2026-05-21
+- Feature: Bump all Github Actions
+- Feature: Add automated test
+- Fix: Use correct action name for usage example
+- Fix: Harden build script runtime installs and pin dist-archive-command
+- Fix: Use non-interactive Composer installs and npm ci when package-lock.json exists
+
 ## [0.1.3] - 2025-08-25
 - Feature: Add no-dev flag to exclude Composer dev dependencies
 

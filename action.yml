@@ -34,13 +34,13 @@ runs:
   steps:
     - name: Setup Node.js
       id: node-setup
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v6
       with:
         node-version: ${{ inputs.node-version }}
 
     - name: Generate zip archive
       id: generate-archive
-      run: ${{ github.action_path }}/build.sh
+      run: bash "${{ github.action_path }}/build.sh"
       shell: bash
       env:
         INSTALL_COMPOSER: ${{ inputs.install-composer }}
@@ -50,13 +50,16 @@ runs:
     - name: Unzip the archive (prevents double zip problem)
       id: unzip-archive
       if: ${{ inputs.upload-artifact == 'true' }}
-      run: unzip -q ${{ inputs.archive-name }}.zip -d dist-archive
+      run: |
+        rm -rf dist-archive
+        mkdir -p dist-archive
+        unzip -q "${{ inputs.archive-name }}.zip" -d dist-archive
       shell: bash
 
     - name: Upload the archive as an artifact
       id: upload-archive-artifact
       if: ${{ inputs.upload-artifact == 'true' }}
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v7
       with:
         name: ${{ inputs.archive-name }}
         path: dist-archive
