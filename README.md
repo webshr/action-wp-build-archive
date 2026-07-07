@@ -60,17 +60,48 @@ Add your keys directly to your .yml configuration file or referenced from the `S
 
 It is strongly recommended to save sensive credentials as secrets.
 
-
-| **Key Name**       | **Required** | **Example** | **Default**       | **Description**                               |
-| ------------------ | ------------ | ----------- | ----------------- | --------------------------------------------- |
-| `install-composer` | no           | `no-dev`    | `no-dev`          | Install Composer packages before generating archive. Use `true`, `no-dev`, or `false` |
-| `npm-run-build`    | no           | `true`      | `false`           | Run `npm run build` before generating archive |
-| `node-version`     | no           | `20`        | `20`              | Node version |
-| `retention-days`   | no           | `3`         | `30`              | Number of days to retain the arhive |
-| `archive-name`     | no           | `my-plugin` | `repository-name` | Name of the zip archive |
-| `upload-artifact`  | no           | `true`      | `false`           | Upload the generated archive as an artifact |
+| **Key Name**       | **Required** | **Example** | **Default**       | **Description**                                                                                                                |
+| ------------------ | ------------ | ----------- | ----------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `install-composer` | no           | `no-dev`    | `no-dev`          | Install Composer packages before generating archive. Use `true`, `no-dev`, or `false`                                          |
+| `npm-run-build`    | no           | `true`      | `false`           | Run `npm run build` before generating archive                                                                                  |
+| `node-version`     | no           | `20`        | `20`              | Node version                                                                                                                   |
+| `retention-days`   | no           | `3`         | `30`              | Number of days to retain the arhive                                                                                            |
+| `archive-name`     | no           | `my-plugin` | `repository-name` | Name of the zip archive                                                                                                        |
+| `upload-artifact`  | no           | `true`      | `false`           | Upload the generated archive as an artifact                                                                                    |
+| `version`          | no           | `1.2.3`     | `(none)`          | Version to stamp into the plugin/theme header, `readme.txt` Stable tag and `package.json` before building. Leave empty to skip |
 
 The action installs WP-CLI and the `wp-cli/dist-archive-command` package at runtime. The dist archive command is pinned to a compatible release for reproducible builds.
+
+### Bumping the version from the release tag
+
+Set the `version` input to stamp a version into your project before the archive is built. When present, it updates:
+
+- the `Version:` header of the main plugin file (or a theme's `style.css`)
+- the `Stable tag:` line in `readme.txt`
+- the `version` field in `package.json`
+
+Typically you drive it from the tag that triggered the release:
+
+```yml
+on:
+  push:
+    tags: ["[0-9]+.[0-9]+.[0-9]+"]
+
+jobs:
+  build-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Plugin
+        uses: webshr/action-wp-build-archive@latest
+        with:
+          npm-run-build: true
+          archive-name: my-plugin
+          version: ${{ github.ref_name }} # e.g. tag 1.2.3
+```
+
+The version is stamped into the files that go into the archive; it is not committed back to the repository. A leading `v` (e.g. `v1.2.3`) is stripped automatically.
 
 ### Credits
 
@@ -78,7 +109,7 @@ This action is inspired by and builds upon the work done in the [Generate WordPr
 
 ### Further Reading
 
-* [Official WP-CLI Command documentation](https://developer.wordpress.org/cli/commands/dist-archive/) for ``wp dist-archive`
+- [Official WP-CLI Command documentation](https://developer.wordpress.org/cli/commands/dist-archive/) for ``wp dist-archive`
 
 ### License
 

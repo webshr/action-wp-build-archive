@@ -1,12 +1,12 @@
-name: 'Build WordPress Archive'
-description: 'Build a zip archive of your WordPress plugin & theme using GitHub Actions'
-author: 'webshr'
+name: "Build WordPress Archive"
+description: "Build a zip archive of your WordPress plugin & theme using GitHub Actions"
+author: "webshr"
 branding:
-  icon: 'archive'
-  color: 'blue'
+  icon: "archive"
+  color: "blue"
 inputs:
   node-version:
-    description: 'Node version'
+    description: "Node version"
     required: false
     default: 20
   install-composer:
@@ -14,23 +14,27 @@ inputs:
     required: true
     default: no-dev
   npm-run-build:
-    description: 'Run `npm run build`?'
+    description: "Run `npm run build`?"
     required: true
     default: false
   retention-days:
-    description: 'Number of days to retain the artifact'
+    description: "Number of days to retain the artifact"
     required: false
     default: 30
   archive-name:
-    description: 'Name of the zip archive'
+    description: "Name of the zip archive"
     required: false
     default: ${{ github.event.repository.name }}
+  version:
+    description: "Version to stamp into the plugin/theme header, readme.txt and package.json before building (e.g. the release tag). Leave empty to skip."
+    required: false
+    default: ""
   upload-artifact:
-    description: 'Upload the artifact?'
+    description: "Upload the artifact?"
     required: false
     default: false
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Setup Node.js
       id: node-setup
@@ -46,6 +50,7 @@ runs:
         INSTALL_COMPOSER: ${{ inputs.install-composer }}
         NPM_RUN_BUILD: ${{ inputs.npm-run-build }}
         ARCHIVE_NAME: ${{ inputs.archive-name }}
+        VERSION: ${{ inputs.version }}
 
     - name: Unzip the archive (prevents double zip problem)
       id: unzip-archive

@@ -21,3 +21,35 @@ jobs:
 
       - name: Assert archive exists
         run: test -f test-archive.zip
+
+  test-version-bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Create sample plugin files
+        run: |
+          cat > sample-plugin.php <<'PHP'
+          <?php
+          /**
+           * Plugin Name: Sample Plugin
+           * Version: 0.0.1
+           */
+          PHP
+          cat > readme.txt <<'TXT'
+          === Sample Plugin ===
+          Stable tag: 0.0.1
+          TXT
+
+      - uses: ./
+        with:
+          install-composer: false
+          npm-run-build: false
+          archive-name: version-bump-archive
+          upload-artifact: false
+          version: 9.9.9
+
+      - name: Assert version was stamped
+        run: |
+          grep -qE '^[[:space:]]*\*[[:space:]]*Version:[[:space:]]*9\.9\.9[[:space:]]*$' sample-plugin.php
+          grep -qE '^Stable tag:[[:space:]]*9\.9\.9[[:space:]]*$' readme.txt
